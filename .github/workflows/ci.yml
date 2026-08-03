@@ -1,12 +1,12 @@
-name: cd
+name: ci
 
 on:
-  push:
+  pull_request:
     branches: [main]
 
 jobs:
-  deploy:
-    name: Deploy
+  tests:
+    name: Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -21,5 +21,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build app
-        run: npm run build
+      - name: Run tests
+        run: npm run test -- --coverage
+
+  style:
+    name: Style
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Style Check
+        run: npm run format:check
+
+      - name: Lint Check
+        run: npm run lint -- --max-warnings=0
